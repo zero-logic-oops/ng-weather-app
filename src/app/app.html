@@ -1,0 +1,137 @@
+<main class="weather-shell">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Skyline home"
+      ><span class="brand-mark">✦</span> skyline</a
+    >
+    <span class="status-chip"><span class="status-dot"></span> live conditions</span>
+  </header>
+
+  <section class="hero-grid" aria-labelledby="page-title">
+    <div>
+      <p class="eyebrow">Personal weather desk</p>
+      <h1 id="page-title">Read the sky<br /><em>before you go.</em></h1>
+      <p class="intro-copy">
+        A clear, calm view of what's happening now and what the next five days have planned.
+      </p>
+    </div>
+    <div class="setup-panel">
+      <div class="panel-label"><span>01</span> Forecast connection</div>
+      <div class="connection-status">
+        @if (isConfigured()) {
+          <span class="connection-icon">✓</span>
+          <div>
+            <strong>Ready to read the sky</strong>
+            <p>Live data is configured for this app.</p>
+          </div>
+        } @else {
+          <span class="connection-icon connection-pending">!</span>
+          <div>
+            <strong>Awaiting forecast configuration</strong>
+            <p>Add the key to the app environment before deploying.</p>
+          </div>
+        }
+      </div>
+      <p class="field-note">
+        Choose a place below to see current conditions and the five-day outlook.
+      </p>
+    </div>
+  </section>
+
+  <section class="search-section" aria-label="Weather search">
+    <div class="section-heading">
+      <div>
+        <span class="section-number">02</span>
+        <h2>Choose a place</h2>
+      </div>
+      <span class="unit-note">All temperatures in °C</span>
+    </div>
+    <form class="search-form" (submit)="$event.preventDefault(); search()">
+      <label class="sr-only" for="city">City name</label>
+      <input
+        id="city"
+        type="search"
+        [value]="city()"
+        (input)="updateCity($event)"
+        placeholder="Search by city, country or region"
+        autocomplete="off"
+      />
+      <button type="submit" [disabled]="isLoading() || !city().trim()">
+        @if (isLoading()) {
+          <span class="spinner"></span> Reading...
+        } @else {
+          Search sky <span>↗</span>
+        }
+      </button>
+    </form>
+    @if (errorMessage()) {
+      <p class="error-message" role="alert"><span>!</span> {{ errorMessage() }}</p>
+    }
+  </section>
+
+  @if (currentWeather(); as weather) {
+    <section class="dashboard" aria-label="Weather results">
+      <article class="current-card">
+        <div class="card-topline">
+          <span>Current conditions</span><span>{{ formatTime(weather.dt) }}</span>
+        </div>
+        <div class="location-line">
+          <h2>{{ weather.name }}</h2>
+          <span>{{ weather.sys.country }}</span>
+        </div>
+        <div class="current-reading">
+          <img [src]="iconUrl(weather.weather[0].icon)" [alt]="weather.weather[0].description" />
+          <div>
+            <strong>{{ weather.main.temp | number: '1.0-0' }}°</strong>
+            <p>{{ weather.weather[0].description }}</p>
+          </div>
+        </div>
+        <div class="temperature-range">
+          <span>Feels like {{ weather.main.feels_like | number: '1.0-0' }}°</span
+          ><span>H {{ weather.main.temp_max | number: '1.0-0' }}°</span
+          ><span>L {{ weather.main.temp_min | number: '1.0-0' }}°</span>
+        </div>
+        <div class="metrics">
+          <div>
+            <span>Humidity</span><strong>{{ weather.main.humidity }}%</strong>
+          </div>
+          <div>
+            <span>Wind</span><strong>{{ weather.wind.speed | number: '1.0-1' }} m/s</strong>
+          </div>
+          <div>
+            <span>Visibility</span
+            ><strong>{{ (weather.visibility ?? 0) / 1000 | number: '1.0-1' }} km</strong>
+          </div>
+        </div>
+      </article>
+      <article class="forecast-card">
+        <div class="card-topline">
+          <span>Five-day outlook</span><span>{{ weather.coord.lat | number: '1.2-2' }}° N</span>
+        </div>
+        @if (forecast(); as outlook) {
+          <div class="forecast-list">
+            @for (item of outlook.list.slice(0, 8); track item.dt) {
+              <div class="forecast-item">
+                <span class="forecast-day">{{ formatDay(item) }}</span
+                ><img
+                  [src]="iconUrl(item.weather[0].icon)"
+                  [alt]="item.weather[0].description"
+                /><span class="forecast-condition">{{ item.weather[0].main }}</span
+                ><strong>{{ item.main.temp | number: '1.0-0' }}°</strong
+                ><span class="rain-chance">{{ item.pop * 100 | number: '1.0-0' }}% rain</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="forecast-loading">Gathering the next five days...</div>
+        }
+      </article>
+    </section>
+  } @else if (!isLoading() && !errorMessage()) {
+    <section class="empty-state">
+      <span class="empty-sun">◌</span>
+      <p>Weather for your next place will appear here.</p>
+    </section>
+  }
+
+  <footer><span>SKYLINE / WEATHER DESK</span><span>Built for the curious</span></footer>
+</main>
