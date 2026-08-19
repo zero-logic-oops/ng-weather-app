@@ -1,20 +1,22 @@
-<main class="weather-shell">
-  <header class="topbar">
+<main class="weather-shell py-4 py-lg-5">
+  <header class="topbar d-flex justify-content-between align-items-center pb-5">
     <a class="brand" href="/" aria-label="Skyline home"
       ><span class="brand-mark">✦</span> skyline</a
     >
-    <span class="status-chip"><span class="status-dot"></span> live conditions</span>
+    <span class="status-chip badge rounded-pill"
+      ><span class="status-dot"></span> live conditions</span
+    >
   </header>
 
-  <section class="hero-grid" aria-labelledby="page-title">
-    <div>
+  <section class="hero-grid row g-5 align-items-end mb-5" aria-labelledby="page-title">
+    <div class="col-lg-7">
       <p class="eyebrow">Personal weather desk</p>
       <h1 id="page-title">Read the sky<br /><em>before you go.</em></h1>
       <p class="intro-copy">
         A clear, calm view of what's happening now and what the next five days have planned.
       </p>
     </div>
-    <div class="setup-panel">
+    <div class="setup-panel col-lg-5">
       <div class="panel-label"><span>01</span> Forecast connection</div>
       <div class="connection-status">
         @if (isConfigured()) {
@@ -37,7 +39,7 @@
     </div>
   </section>
 
-  <section class="search-section" aria-label="Weather search">
+  <section class="search-section border-top pt-4 pb-4" aria-label="Weather search">
     <div class="section-heading">
       <div>
         <span class="section-number">02</span>
@@ -45,9 +47,10 @@
       </div>
       <span class="unit-note">All temperatures in °C</span>
     </div>
-    <form class="search-form" (submit)="$event.preventDefault(); search()">
+    <form class="search-form input-group" (submit)="$event.preventDefault(); search()">
       <label class="sr-only" for="city">City name</label>
       <input
+        class="form-control"
         id="city"
         type="search"
         [value]="city()"
@@ -55,7 +58,7 @@
         placeholder="Search by city, country or region"
         autocomplete="off"
       />
-      <button type="submit" [disabled]="isLoading() || !city().trim()">
+      <button class="btn btn-primary" type="submit" [disabled]="isLoading() || !city().trim()">
         @if (isLoading()) {
           <span class="spinner"></span> Reading...
         } @else {
@@ -64,13 +67,18 @@
       </button>
     </form>
     @if (errorMessage()) {
-      <p class="error-message" role="alert"><span>!</span> {{ errorMessage() }}</p>
+      <div
+        class="error-message alert alert-danger d-flex align-items-center gap-2 mt-3 mb-0"
+        role="alert"
+      >
+        <span>!</span> {{ errorMessage() }}
+      </div>
     }
   </section>
 
   @if (currentWeather(); as weather) {
-    <section class="dashboard" aria-label="Weather results">
-      <article class="current-card">
+    <section class="dashboard row g-4" aria-label="Weather results">
+      <article class="current-card card shadow-sm border-0 col-lg-5">
         <div class="card-topline">
           <span>Current conditions</span><span>{{ formatTime(weather.dt) }}</span>
         </div>
@@ -103,7 +111,7 @@
           </div>
         </div>
       </article>
-      <article class="forecast-card">
+      <article class="forecast-card card shadow-sm border-0 col-lg-7">
         <div class="card-topline">
           <span>Five-day outlook</span><span>{{ weather.coord.lat | number: '1.2-2' }}° N</span>
         </div>

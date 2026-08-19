@@ -237,14 +237,10 @@ button:disabled {
   border-radius: 50%;
   font-weight: 700;
 }
-.dashboard {
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 18px;
-}
 .current-card,
 .forecast-card {
   padding: 27px 30px;
+  border-radius: 0.75rem;
 }
 .current-card {
   background: var(--ink);
@@ -373,6 +369,9 @@ button:disabled {
   color: var(--muted);
   font: 1.3rem var(--serif);
   text-align: center;
+}
+.empty-state {
+  border-radius: 0.75rem;
 }
 .empty-sun {
   display: block;
